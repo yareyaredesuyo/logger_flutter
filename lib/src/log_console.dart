@@ -63,7 +63,8 @@ class _LogConsoleState extends State<LogConsole> {
 
     _scrollController.addListener(() {
       if (!_scrollListenerEnabled) return;
-      var scrolledToBottom = _scrollController.offset >= _scrollController.position.maxScrollExtent;
+      var scrolledToBottom = _scrollController.offset >=
+          _scrollController.position.maxScrollExtent;
       setState(() {
         _followBottom = scrolledToBottom;
       });
@@ -290,7 +291,13 @@ class _LogConsoleState extends State<LogConsole> {
 
   RenderedEvent _renderEvent(OutputEvent event) {
     var parser = AnsiParser(widget.dark);
-    var text = event.lines.join('\n');
+    var text = '';
+    RegExp regExp = RegExp(
+        r'(\[38;5;199m|\[38;5;196m|\[38;5;208m|\[38;5;12m|\[38;5;244m|\[48;5;196m|\[48;5;199m|\p{S}.\[0m|\[0m|\[39m|\[49m)',
+        unicode: true);
+    event.lines.forEach((element) {
+      text = text + element.replaceAll(regExp, '').trim() + '\n';
+    });
     parser.parse(text);
     return RenderedEvent(
       _currentId++,
